@@ -8,7 +8,8 @@ class API:
             api_data = json.loads(f.read())
         self.api_key = api_data[0]["x-api-key"]
         self.uid = api_data[0]["userId"]
-        self.tid = api_data[1]["teamId"]   
+        self.tid = api_data[1]["teamId"]
+
     def locate_me(self):
         conn = http.client.HTTPSConnection("www.notexponential.com")
         boundary = ''
@@ -23,6 +24,7 @@ class API:
         data = res.read()
         print(data.decode("utf-8"))
         return json.loads(data.decode("utf-8"))
+
     def enter_world(self):
         conn = http.client.HTTPSConnection("www.notexponential.com")
         dataList = []
@@ -56,6 +58,7 @@ class API:
         data = res.read()
         print(data.decode("utf-8"))
         return json.loads(data.decode("utf-8"))
+
     def get_runs(self):
         conn = http.client.HTTPSConnection("www.notexponential.com")
         boundary = ''
@@ -69,6 +72,7 @@ class API:
         res = conn.getresponse()
         data = res.read()
         print(data.decode("utf-8"))
+
     def get_score(self):
         conn = http.client.HTTPSConnection("www.notexponential.com")
         payload = ''
@@ -80,6 +84,7 @@ class API:
         res = conn.getresponse()
         data = res.read()
         print(data.decode("utf-8"))
+        
     def make_move(self):
         conn = http.client.HTTPSConnection("www.notexponential.com")
         dataList = []
