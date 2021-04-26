@@ -18,7 +18,6 @@ def update_q_table(table):
     return table
 
 def learn(q_table, worldId=0, mode='train'):
-
     #create the api instance
     a = api.API(worldId=worldId)
     a.enter_world()
