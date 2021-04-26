@@ -3,12 +3,13 @@ import mimetypes
 import json
 from codecs import encode
 class API:
-    def __init__(self, file="api_key/key.json") -> None:
+    def __init__(self, file="api_key/key.json", worldId=0) -> None:
         with open(file, "r") as f:
             api_data = json.loads(f.read())
         self.api_key = api_data[0]["x-api-key"]
         self.uid = api_data[0]["userId"]
         self.tid = api_data[1]["teamId"]
+        self.wid = worldId
 
     def locate_me(self):
         conn = http.client.HTTPSConnection("www.notexponential.com")
@@ -25,7 +26,7 @@ class API:
         print(data.decode("utf-8"))
         return json.loads(data.decode("utf-8"))
 
-    def enter_world(self):
+    def enter_world(self, worldId=0):
         conn = http.client.HTTPSConnection("www.notexponential.com")
         dataList = []
         boundary = 'wL36Yn8afVp8Ag7AmP8qZ0SA4n1v9T'
@@ -38,7 +39,7 @@ class API:
         dataList.append(encode('Content-Disposition: form-data; name=worldId;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
         dataList.append(encode(''))
-        dataList.append(encode("0"))
+        dataList.append(encode(self.wid))
         dataList.append(encode('--' + boundary))
         dataList.append(encode('Content-Disposition: form-data; name=teamId;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
@@ -49,7 +50,7 @@ class API:
         body = b'\r\n'.join(dataList)
         payload = body
         headers = {
-        'x-api-key': self.api_key,
+        'x-api-key': self.api_key
         'userid': self.uid,
         'Content-type': 'multipart/form-data; boundary={}'.format(boundary)
         }
@@ -85,7 +86,7 @@ class API:
         data = res.read()
         print(data.decode("utf-8"))
         
-    def make_move(self):
+    def make_move(self, move='N', worldId=0):
         conn = http.client.HTTPSConnection("www.notexponential.com")
         dataList = []
         boundary = 'wL36Yn8afVp8Ag7AmP8qZ0SA4n1v9T'
@@ -103,12 +104,12 @@ class API:
         dataList.append(encode('Content-Disposition: form-data; name=move;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
         dataList.append(encode(''))
-        dataList.append(encode("N"))
+        dataList.append(encode(move))
         dataList.append(encode('--' + boundary))
         dataList.append(encode('Content-Disposition: form-data; name=worldId;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
         dataList.append(encode(''))
-        dataList.append(encode("0"))
+        dataList.append(encode(self.wid))
         dataList.append(encode('--'+boundary+'--'))
         dataList.append(encode(''))
         body = b'\r\n'.join(dataList)
