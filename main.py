@@ -1,8 +1,17 @@
 import model
 from api import API
 
+def epsilon_decay(epsilon, epoch, epochs):
+    
+    epsilon = epsilon*np.exp(-.01*epoch)
+    
+    print(epsilon)
+    return epsilon
+
 
 def main():
+
+
 
 	mode = str(input("\n(default is train, world 0)\n") or "t")
 
@@ -10,9 +19,26 @@ def main():
 
 	if mode == "t":
 
+		epochs = 100
+
+		world = 0
+
 		q_table = model.init_q_table()
 
-		new_q_table = model.learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=0.9)
+		file_path = f"./runs/Q-table_world_{world}_epoch_"
+
+		for epoch in epochs:
+
+			q_table = model.learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=0.9)
+
+			epsilon = epsilon_decay(epsilon, epoch, epochs)
+
+			numpy.save(file_path+epoch+".np", q_table) 
+
+
+
+
+		
 
 	# 	agent = Api()
 	# 	user = Api("./api_key/mellon.json") #sorry

@@ -10,8 +10,9 @@ def init_q_table():
     access grid as row, col, action
     ex: [0][0][0] gird 0:0, action 'N'
     '''
-    return -1*(np.random.rand(40, 40, 4)) 
+    # return -1*(np.random.rand(40, 40, 4)) 
 
+    return (np.zeros(40, 40, 4))
 
 def num_to_move(num):
     if num == 0:
@@ -24,7 +25,6 @@ def num_to_move(num):
         return 'W'
     return 'ERROR!'
 
-#TODO: actually update q table
 def update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num):
     '''
     bellman eq: NEW Q(s,a) = Q(s,a) + learning_rate * [R(s,a) + gamma * maxQ'(s',a') - Q(s,a)]
