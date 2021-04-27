@@ -84,8 +84,14 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
             print(f"something broke on make_move call \nresponse lookes like: {move_response}")
             break
         # convert new location JSON into tuple
-        new_loc = int(move_response["newState"]["x"]), int(move_response["newState"]["y"]) #tuple (x,y) (PROBABLY DON'T NEED THIS!?)
 
+        if move_response["newState"] is not None:
+            new_loc = int(move_response["newState"]["x"]), int(move_response["newState"]["y"]) #tuple (x,y) (PROBABLY DON'T NEED THIS!?)
+
+        else:
+            terminal_state = True
+            print("TERMINAL STATE ENCOUNTERED?!!?!??")
+            
         reward = move_response["reward"]
 
         #update the q-table for the state we were in before
