@@ -39,18 +39,18 @@ class API:
         dataList.append(encode('Content-Disposition: form-data; name=worldId;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
         dataList.append(encode(''))
-        dataList.append(encode(self.wid))
+        dataList.append(encode(str(self.wid)))
         dataList.append(encode('--' + boundary))
         dataList.append(encode('Content-Disposition: form-data; name=teamId;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
         dataList.append(encode(''))
-        dataList.append(encode(self.tid))
+        dataList.append(encode(str(self.tid)))
         dataList.append(encode('--'+boundary+'--'))
         dataList.append(encode(''))
         body = b'\r\n'.join(dataList)
         payload = body
         headers = {
-        'x-api-key': self.api_key
+        'x-api-key': self.api_key,
         'userid': self.uid,
         'Content-type': 'multipart/form-data; boundary={}'.format(boundary)
         }
@@ -99,7 +99,7 @@ class API:
         dataList.append(encode('Content-Disposition: form-data; name=teamId;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
         dataList.append(encode(''))
-        dataList.append(encode(self.tid))
+        dataList.append(encode(str(self.tid)))
         dataList.append(encode('--' + boundary))
         dataList.append(encode('Content-Disposition: form-data; name=move;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
@@ -109,7 +109,7 @@ class API:
         dataList.append(encode('Content-Disposition: form-data; name=worldId;'))
         dataList.append(encode('Content-Type: {}'.format('text/plain')))
         dataList.append(encode(''))
-        dataList.append(encode(self.wid))
+        dataList.append(encode(str(self.wid)))
         dataList.append(encode('--'+boundary+'--'))
         dataList.append(encode(''))
         body = b'\r\n'.join(dataList)
@@ -123,3 +123,4 @@ class API:
         res = conn.getresponse()
         data = res.read()
         print(data.decode("utf-8"))
+        return json.loads(data.decode("utf-8"))
