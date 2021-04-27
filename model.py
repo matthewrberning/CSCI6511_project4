@@ -13,8 +13,9 @@ def init_q_table():
     access grid as row, col, action
     ex: [0][0][0] gird 0:0, action 'N'
     '''
-    return -1*(np.random.rand(40, 40, 4)) 
+    # return -1*(np.random.rand(40, 40, 4)) 
 
+    return (np.zeros(40, 40, 4))
 
 def num_to_move(num):
     if num == 0:
@@ -27,7 +28,6 @@ def num_to_move(num):
         return 'W'
     return 'ERROR!'
 
-#TODO: actually update q table
 def update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num):
     '''
     bellman eq: NEW Q(s,a) = Q(s,a) + learning_rate * [R(s,a) + gamma * maxQ'(s',a') - Q(s,a)]
@@ -87,8 +87,13 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
             print(f"something broke on make_move call \nresponse lookes like: {move_response}")
             break
         # convert new location JSON into tuple
-        new_loc = int(move_response["newState"]["x"]), int(move_response["newState"]["y"]) #tuple (x,y) (PROBABLY DON'T NEED THIS!?)
-        update_viz()
+        if move_response["newState"] is not None:
+            new_loc = int(move_response["newState"]["x"]), int(move_response["newState"]["y"]) #tuple (x,y) (PROBABLY DON'T NEED THIS!?)
+
+        else:
+            terminal_state = True
+            print("TERMINAL STATE ENCOUNTERED?!!?!??")
+       
         reward = move_response["reward"]
 
         #update the q-table for the state we were in before
