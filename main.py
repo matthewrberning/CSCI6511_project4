@@ -1,5 +1,6 @@
 import model
 from api import API
+import numpy as np
 
 def epsilon_decay(epsilon, epoch, epochs):
     
@@ -21,19 +22,22 @@ def main():
 
 		epochs = 100
 
+		epsilon=0.9
+
 		world = 0
 
 		q_table = model.init_q_table()
 
 		file_path = f"./runs/Q-table_world_{world}_epoch_"
 
-		for epoch in epochs:
+		for epoch in range(epochs):
 
-			q_table = model.learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=0.9)
+
+			q_table = model.learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon)
 
 			epsilon = epsilon_decay(epsilon, epoch, epochs)
 
-			numpy.save(file_path+epoch+".np", q_table) 
+			np.save(file_path+epoch+".np", q_table) 
 
 
 

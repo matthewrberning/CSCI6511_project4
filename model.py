@@ -1,10 +1,8 @@
-# hello world
 import numpy as np
 import api
 import random
-
-def update_viz():
-    x = 5
+import matplotlib.pyplot as plt
+import utils
 
 def init_q_table():
     '''
@@ -15,7 +13,7 @@ def init_q_table():
     '''
     # return -1*(np.random.rand(40, 40, 4)) 
 
-    return (np.zeros(40, 40, 4))
+    return (np.zeros((40, 40, 4)))
 
 def num_to_move(num):
     if num == 0:
@@ -49,7 +47,11 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
     w_res = a.enter_world()
     print("w_res",w_res)
 
-    # if w_res["code"] != "OK":
+    # if w_res["code"] != "OK": #TODO handel world breaking
+
+
+    #create empty list to accumulate the rewards over time to plot vs step
+    rewards_accquired = []
 
     #init terminal state
     terminal_state = False
@@ -94,7 +96,9 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
             terminal_state = True
             print("TERMINAL STATE ENCOUNTERED?!!?!??")
        
-        reward = move_response["reward"]
+        reward = float(move_response["reward"])
+
+        rewards_accquired.append(reward) #add reward to plot
 
         #update the q-table for the state we were in before
         update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num)
@@ -105,10 +109,9 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
         if terminal_state:
             break
 
-
-
-    # #close the api instance
-    # a.enter_world(worldId=-1)
+    #cumulative average for plotting purposes
+    cumulative_average = np.cumsum(data) / (np.arange(len(data)) + 1)
+    utils.plot_learning(worldId, epoch, cumulative_average)()
 
     return q_table
 
