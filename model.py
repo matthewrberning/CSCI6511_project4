@@ -1,7 +1,6 @@
 import numpy as np
 import api
 import random
-import matplotlib.pyplot as plt
 import utils
 
 def init_q_table():
@@ -110,7 +109,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
             break
 
     #cumulative average for plotting purposes
-    cumulative_average = np.cumsum(data) / (np.arange(len(data)) + 1)
+    cumulative_average = np.cumsum(rewards_accquired) / (np.arange(len(rewards_accquired)) + 1)
     utils.plot_learning(worldId, epoch, cumulative_average)()
 
     return q_table
