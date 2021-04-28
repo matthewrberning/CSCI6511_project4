@@ -1,4 +1,5 @@
 # hello world
+from PIL.Image import new
 import numpy as np
 import api
 import random
@@ -43,7 +44,7 @@ def update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, mov
     q_table[location[0], location[1], move_num] = new_q
 
 #NOTE: We multiplied the original lerning rate of 0.0001 by 10 in order to see the earning process go by faster
-def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsilon=0.9, good_term_states=[], bad_term_states=[], epoch=0, obstacles=[]):
+def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsilon=0.9, good_term_states=[], bad_term_states=[], epoch=0, obstacles=[], run_num=0):
     #create the api instance
     a = api.API(worldId=worldId)
     w_res = a.enter_world()
@@ -70,12 +71,12 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
     visited.append(location)
     while True:
         # CODE FOR VISUALIZATION
-        curr_board[location[0]][location[1]] = 1
+        curr_board[location[1]][location[0]] = 1
         for i in range (len(curr_board)):
             for j in range(len(curr_board)):
                 if (curr_board[i][j] != 0):
                     curr_board[i][j] -= .1
-        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles)
+        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num)
         # END CODE FOR VISUALIZATION
 
         #in q-table, get index of best option for movement based on our current state in the world
@@ -138,8 +139,13 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         location = new_loc
 
         if terminal_state:
+            curr_board[new_loc[0]][new_loc[1]] = float("-inf")
             if reward > 0:
                 good = True
+                good_term_states.append(new_loc)
+            else:
+                bad_term_states.append(new_loc)
+            v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num)
             break
 
 
@@ -150,9 +156,9 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
     #cumulative average for plotting purposes
     pyplot.figure(2, figsize=(5,5))
     cumulative_average = np.cumsum(rewards_acquired) / (np.arange(len(rewards_acquired)) + 1)
-    utils.plot_learning(worldId, epoch, cumulative_average)
+    utils.plot_learning(worldId, epoch, cumulative_average, run_num)
 
-    return q_table, location, obstacles, good
+    return q_table, new_loc, obstacles, good
 
 
 

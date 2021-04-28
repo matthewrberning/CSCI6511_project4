@@ -1,6 +1,7 @@
 import model
 from api import API
 import numpy as np
+import os
 
 def epsilon_decay(epsilon, epoch, epochs):
     
@@ -25,8 +26,9 @@ def main():
 		world = 0
 
 		q_table = model.init_q_table()
+		run_num = len([i for i in os.listdir("runs")])
 
-		file_path = f"./runs/Q-table_world_{world}_epoch_"
+		file_path = "./runs/attempt-{}/Q-table_world_{}_epoch_".format(run_num, world)
 
 		good_term_states = []
 		bad_term_states = []
@@ -35,9 +37,10 @@ def main():
 
 		for epoch in range(epochs):
 			print("EPOCH #"+str(epoch)+":\n\n")
+			epsilon = epsilon_decay(epsilon, epoch, epochs)
 			q_table, new_term_state, obstacles, is_good = model.learn(
-				q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
-				epoch=epoch, obstacles=obstacles)
+				q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.7, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
+				epoch=epoch, obstacles=obstacles, run_num=run_num)
 
 			if not(new_term_state in good_term_states) and not(new_term_state in bad_term_states):
 				if is_good:
@@ -45,7 +48,7 @@ def main():
 				else:
 					bad_term_states.append(new_term_state)
 
-			epsilon = epsilon_decay(epsilon, epoch, epochs)
+			
 
 			np.save(file_path+str(epoch)+".np", q_table) 
 
