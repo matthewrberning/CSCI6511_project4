@@ -2,9 +2,9 @@
 import numpy as np
 import api
 import random
-
-def update_viz():
-    x = 5
+import movement_viz as v
+from matplotlib import pyplot
+import utils
 
 def init_q_table():
     '''
@@ -15,7 +15,7 @@ def init_q_table():
     '''
     # return -1*(np.random.rand(40, 40, 4)) 
 
-    return (np.zeros(40, 40, 4))
+    return (np.zeros((40, 40, 4)))
 
 def num_to_move(num):
     if num == 0:
@@ -42,20 +42,20 @@ def update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, mov
     #update q_table with new value
     q_table[location[0], location[1], move_num] = new_q
 
-
-def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=0.9):
+#NOTE: We multiplied the original lerning rate of 0.0001 by 10 in order to see the earning process go by faster
+def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsilon=0.9, good_term_states=[], bad_term_states=[], epoch=0, obstacles=[]):
     #create the api instance
     a = api.API(worldId=worldId)
     w_res = a.enter_world()
     print("w_res",w_res)
 
-    # if w_res["code"] != "OK":
-
     #init terminal state
     terminal_state = False
-
+    good = False
+    rewards_acquired = []
     #find out where we are
     loc_response = a.locate_me()
+    visited = []
     print("loc_response",loc_response)
     #OK response looks like {"code":"OK","world":"0","state":"0:2"}
     if loc_response["code"] != "OK":
@@ -63,9 +63,21 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
             return -1
     # convert JSON into a tuple (x,y)
     location = int(loc_response["state"].split(':')[0]), int(loc_response["state"].split(':')[1]) #location is a tuple (x, y)
-
+    # SET UP FIGURE FOR VISUALIZATION.
+    pyplot.figure(1, figsize=(10,10))
+    curr_board = [[float('-inf')] * 40 for temp in range(40)]
+    #
+    visited.append(location)
     while True:
-    
+        # CODE FOR VISUALIZATION
+        curr_board[location[0]][location[1]] = 1
+        for i in range (len(curr_board)):
+            for j in range(len(curr_board)):
+                if (curr_board[i][j] != 0):
+                    curr_board[i][j] -= .1
+        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles)
+        # END CODE FOR VISUALIZATION
+
         #in q-table, get index of best option for movement based on our current state in the world
         if mode == 'train':
             #use an episolon greedy approach to randomly explore or exploit
@@ -89,12 +101,35 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
         # convert new location JSON into tuple
         if move_response["newState"] is not None:
             new_loc = int(move_response["newState"]["x"]), int(move_response["newState"]["y"]) #tuple (x,y) (PROBABLY DON'T NEED THIS!?)
+            # keep track of if we hit any obstacles
+            expected_loc = list(location)
+            recent_move = num_to_move(move_num)
+            if recent_move == "N":
+                expected_loc[1]-=1
+            elif recent_move == "S":
+                expected_loc[1]+=1
+            elif recent_move == "E":
+                expected_loc[0]+=1
+            else:
+                expected_loc[0]-=1
+            expected_loc = tuple(expected_loc)
+            print("New Loc:",new_loc)
+            print("Expected loc:",expected_loc)
+            if (new_loc[0] != expected_loc[0] or new_loc[1] != expected_loc[1]):
+                obstacles.append(expected_loc)
+            visited.append(new_loc)
+            for obstacle in obstacles:
+                if obstacle in visited:
+                    obstacles.remove(obstacle)
+
 
         else:
             terminal_state = True
             print("TERMINAL STATE ENCOUNTERED?!!?!??")
        
-        reward = move_response["reward"]
+        reward = float(move_response["reward"])
+
+        rewards_acquired.append(reward) #add reward to plot
 
         #update the q-table for the state we were in before
         update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num)
@@ -103,6 +138,8 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
         location = new_loc
 
         if terminal_state:
+            if reward > 0:
+                good = True
             break
 
 
@@ -110,7 +147,12 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.0001, gamma=0.9, eps
     # #close the api instance
     # a.enter_world(worldId=-1)
 
-    return q_table
+    #cumulative average for plotting purposes
+    pyplot.figure(2, figsize=(5,5))
+    cumulative_average = np.cumsum(rewards_acquired) / (np.arange(len(rewards_acquired)) + 1)
+    utils.plot_learning(worldId, epoch, cumulative_average)
+
+    return q_table, location, obstacles, good
 
 
 
