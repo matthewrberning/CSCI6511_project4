@@ -3,7 +3,7 @@ import os
 import random
 import time
 
-def update_grid(data, good_term_states, bad_term_states, obstacles, run_num):
+def update_grid(data, good_term_states, bad_term_states, obstacles, run_num, epoch, world):
     pyplot.figure(1)
     pyplot.clf()
     pyplot.imshow(data)
@@ -19,6 +19,6 @@ def update_grid(data, good_term_states, bad_term_states, obstacles, run_num):
     pyplot.show(block = False)
     pyplot.pause(0.0001)
     
-    if not os.path.exists("./runs/attempt-{}".format(run_num)):
-        os.makedirs("./runs/attempt-{}".format(run_num))
-    pyplot.savefig("./runs/attempt-{}/output-plot.png".format(run_num))
+    if not os.path.exists("./runs/world-{}/attempt-{}/epoch-{}".format(world,run_num, epoch)):
+        os.makedirs("./runs/world-{}/attempt-{}/epoch-{}".format(world,run_num, epoch))
+    pyplot.savefig("./runs/world-{}/attempt-{}/epoch-{}/epoch.png".format(world, run_num, epoch))

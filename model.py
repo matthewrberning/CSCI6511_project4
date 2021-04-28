@@ -76,7 +76,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
             for j in range(len(curr_board)):
                 if (curr_board[i][j] != 0):
                     curr_board[i][j] -= .1
-        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num)
+        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId)
         # END CODE FOR VISUALIZATION
 
         #in q-table, get index of best option for movement based on our current state in the world
@@ -133,7 +133,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         rewards_acquired.append(reward) #add reward to plot
 
         #update the q-table for the state we were in before
-        update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num)
+        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId)
         
         #update our current location var
         location = new_loc
@@ -145,7 +145,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
                 good_term_states.append(new_loc)
             else:
                 bad_term_states.append(new_loc)
-            v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num)
+            v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId)
             break
 
 

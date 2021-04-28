@@ -26,9 +26,11 @@ def main():
 		world = 0
 
 		q_table = model.init_q_table()
-		run_num = len([i for i in os.listdir("runs")])
+		if not os.path.exists("runs/world-{}".format(world)):
+			os.makedirs("runs/world-{}".format(world))
+		run_num = len([i for i in os.listdir("runs/world-{}".format(world))])
 
-		file_path = "./runs/attempt-{}/Q-table_world_{}_epoch_".format(run_num, world)
+		file_path = "./runs/world-{}/attempt-{}/Q-table_world_{}_epoch_".format(world,run_num, world)
 
 		good_term_states = []
 		bad_term_states = []
