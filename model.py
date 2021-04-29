@@ -103,7 +103,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
     pyplot.figure(1, figsize=(10,10))
     curr_board = [[float('-inf')] * 40 for temp in range(40)]
     
-    #
+    #keep track of where we've been for the visualization
     visited.append(location)
     while True:
         # CODE FOR VISUALIZATION
@@ -127,13 +127,13 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
                 move_num = random.randint(0,3) 
 
         else:
-            #mode is exploit
+            #mode is exploit -we'll use what we already have in the q-table to decide on our moves
             move_num = np.argmax(q_table[location[0]][location[1]])
 
         #make the move - transition into a new state
         move_response = a.make_move(move=num_to_move(move_num), worldId=str(worldId)) 
 
-        print("move_response", move_response)
+        if verbose: print("move_response", move_response)
         #OK response looks like {"code":"OK","worldId":0,"runId":"931","reward":-0.1000000000,"scoreIncrement":-0.0800000000,"newState":{"x":"0","y":3}}
         
         if move_response["code"] != "OK":
@@ -150,7 +150,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
             # keep track of if we hit any obstacles
             expected_loc = list(location)
 
-            #convert our move into 
+            #convert the move we tried to make into an expected location where we think we'll end up (expected_loc) 
             recent_move = num_to_move(move_num)
             if recent_move == "N":
                 expected_loc[1]-=1
@@ -161,24 +161,32 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
             else:
                 expected_loc[0]-=1
             expected_loc = tuple(expected_loc)
-            print("New Loc:",new_loc)
-            print("Expected loc:",expected_loc)
-            #if (new_loc[0] != expected_loc[0] or new_loc[1] != expected_loc[1]):
+
+            if verbose: print(f"New Loc: {new_loc} (where we actually are now):")
+            if verbose: print(f"Expected Loc: {expected_loc} (where we thought we were going to be):")
+
             if (mode == "train"):
                 obstacles.append(expected_loc)
+
+            #continue to track where we have been
             visited.append(new_loc)
+
+            #if we placed an obstacle there in the vis, remove it
             for obstacle in obstacles:
                 if obstacle in visited:
                     obstacles.remove(obstacle)
             
             
         else:
+            #we hit a terminal state
             terminal_state = True
             print("\n\n--------------------------\nTERMINAL STATE ENCOUNTERED\n--------------------------\n\n")
        
+        #get the reward for the most recent move we made
         reward = float(move_response["reward"])
 
-        rewards_acquired.append(reward) #add reward to plot
+        #add reward to plot
+        rewards_acquired.append(reward) 
 
         #if we are training the model then update the q-table for the state we were in before
         #using the bellman-human algorithim
