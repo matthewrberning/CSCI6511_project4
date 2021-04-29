@@ -76,8 +76,8 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
                 if (curr_board[i][j] != 0):
                     curr_board[i][j] -= .1
         for obstacle in obstacles:
-                if obstacle in visited:
-                    obstacles.remove(obstacle)
+            if obstacle in visited:
+                obstacles.remove(obstacle)
         v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId, location)
         # END CODE FOR VISUALIZATION
 
@@ -118,7 +118,8 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
             expected_loc = tuple(expected_loc)
             print("New Loc:",new_loc)
             print("Expected loc:",expected_loc)
-            if (new_loc[0] != expected_loc[0] or new_loc[1] != expected_loc[1]):
+            #if (new_loc[0] != expected_loc[0] or new_loc[1] != expected_loc[1]):
+            if (mode == "train"):
                 obstacles.append(expected_loc)
             visited.append(new_loc)
             for obstacle in obstacles:
@@ -135,7 +136,8 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         rewards_acquired.append(reward) #add reward to plot
 
         #update the q-table for the state we were in before
-        update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num)
+        if mode == "train":
+            update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num)
         
         #update our current location var
         location = new_loc
