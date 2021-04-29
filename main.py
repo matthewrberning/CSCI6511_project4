@@ -3,7 +3,7 @@ from api import API
 import numpy as np
 import os
 import utils
-
+from tqdm import trange
 
 
 
@@ -110,10 +110,10 @@ def main():
 		else:
 			v = False
 
-
 		if confirm == "y":
-
+			t = trange(10, desc='Training on all worlds', leave=True)
 			for i in range(10):
+				t.set_description('Training on all worlds: Current={}'.format(i+1))
 
 				world = i+1
 
