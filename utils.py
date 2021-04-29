@@ -8,3 +8,10 @@ def plot_learning(worldId, epoch, cumulative_average, rn):
     if not os.path.exists(f'runs/world_{worldId}/attempt_{rn}'):
         os.makedirs(f'runs/world_{worldId}/attempt_{rn}')
     plt.savefig(f'runs/world_{worldId}/attempt_{rn}/world_{worldId}_epoch{epoch}learning.png')
+
+def epsilon_decay(epsilon, epoch, epochs):
+    
+    epsilon = epsilon*np.exp(-.01*epoch)
+    
+    print(epsilon)
+    return epsilon
