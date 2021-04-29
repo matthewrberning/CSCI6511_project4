@@ -111,10 +111,7 @@ def main():
 			v = False
 
 		if confirm == "y":
-			t = trange(10, desc='Training on all worlds', leave=True)
 			for i in range(10):
-				t.set_description('Training on all worlds: Current={}'.format(i+1))
-
 				world = i+1
 
 				print(f"\ntraining from scratch for {epochs} on world {world}! \n(visualizations will be saved to './runs/world_{world}/')\n(Q-tables will be saved to './runs/Q-table_world_{world}'")
@@ -135,7 +132,11 @@ def main():
 				bad_term_states = []
 				obstacles = []
 
-				for epoch in range(epochs):
+				t = trange(epochs, desc='Training on all worlds', leave=True)
+
+				for epoch in t:
+					t.set_description('Current World={}'.format(i+1))
+
 					print("EPOCH #"+str(epoch)+":\n\n")
 					q_table, good_term_states, bad_term_states, obstacles = model.learn(
 						q_table, worldId=world, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
