@@ -21,3 +21,4 @@ def epsilon_decay(epsilon, epoch, epochs):
     
     print(f"\nNEW EPSILON: {epsilon}\n")
     return epsilon
+

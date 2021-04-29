@@ -1,9 +1,9 @@
-# hello world
 import numpy as np
 import api
 import random
 import movement_viz as v
 from matplotlib import pyplot
+
 import utils
 
 def init_q_table():
@@ -13,6 +13,7 @@ def init_q_table():
     access grid as row, col, action
     ex of indexing: q-tab[0][0][0] gird 0:0, action 'N'
     '''
+
     return (np.zeros((40, 40, 4)))
 
 def num_to_move(num):
@@ -72,7 +73,9 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
     a = api.API(worldId=worldId)
     w_res = a.enter_world()
 
+
     if verbose: print("w_res: ",w_res)
+
 
     #init terminal state reached
     terminal_state = False
@@ -185,6 +188,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         #get the reward for the most recent move we made
         reward = float(move_response["reward"])
 
+
         #add reward to plot
         rewards_acquired.append(reward) 
 
@@ -224,3 +228,4 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
     utils.plot_learning(worldId, epoch, cumulative_average, run_num)
 
     return q_table, good_term_states, bad_term_states, obstacles
+

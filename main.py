@@ -6,6 +6,7 @@ import utils
 
 
 
+
 def main():
 
 	if not (os.path.exists(f"./api_key/key.json")):
@@ -22,6 +23,7 @@ def main():
 
 		epochs = int(input(f"\nhow many epochs would you like to train the agent on World {world} for? (default is 1 epoch)\nEPOCHS: ") or "1")
 
+
 		print(f"\ntraining from scratch for {epochs} on world {world}! \n(visualizations will be saved to './runs/world_{world}/')\n(Q-tables will be saved to './runs/Q-table_world_{world}'")
 
 		verbose = str(input(f"\nverbosity? (default is yes)\n([y]/n)? ") or "y")
@@ -32,6 +34,7 @@ def main():
 
 		epsilon = 0.9
 
+
 		q_table = model.init_q_table()
 
 		if not (os.path.exists(f"./runs/world_{world}/")):
@@ -40,11 +43,14 @@ def main():
 		run_num = len([i for i in os.listdir(f"runs/world_{world}")])
 
 
+
 		file_path = f"./runs/Q-table_world_{world}"
+
 
 		good_term_states = []
 		bad_term_states = []
 		obstacles = []
+
 
 		for epoch in range(epochs):
 			print("EPOCH #"+str(epoch)+":\n\n")
