@@ -19,18 +19,21 @@ def main():
 
 	if mode == "t":
 
-		epochs = 100
+		epochs = 1
 
 		epsilon = 0.9
 
 		world = 0
 
 		q_table = model.init_q_table()
-		if not os.path.exists("runs/world-{}".format(world)):
-			os.makedirs("runs/world-{}".format(world))
-		run_num = len([i for i in os.listdir("runs/world-{}".format(world))])
 
-		file_path = "./runs/world-{}/attempt-{}/Q-table_world_{}_epoch_".format(world,run_num, world)
+		if not (os.path.exists(f"./runs/world_{world}/")):
+			os.makedirs(f"./runs/world_{world}/")
+
+		run_num = len([i for i in os.listdir(f"runs/world_{world}")])
+
+
+		file_path = f"./runs/Q-table_world_{world}_epoch_"
 
 		good_term_states = []
 		bad_term_states = []
@@ -39,18 +42,13 @@ def main():
 
 		for epoch in range(epochs):
 			print("EPOCH #"+str(epoch)+":\n\n")
-			epsilon = epsilon_decay(epsilon, epoch, epochs)
-			q_table, new_term_state, obstacles, is_good = model.learn(
-				q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.7, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
+			q_table, good_term_states, bad_term_states, obstacles = model.learn(
+				q_table, worldId=world, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
 				epoch=epoch, obstacles=obstacles, run_num=run_num)
 
-			if not(new_term_state in good_term_states) and not(new_term_state in bad_term_states):
-				if is_good:
-					good_term_states.append(new_term_state)
-				else:
-					bad_term_states.append(new_term_state)
-
 			
+
+			epsilon = epsilon_decay(epsilon, epoch, epochs)
 
 			np.save(file_path+str(epoch)+".np", q_table) 
 

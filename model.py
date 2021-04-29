@@ -1,5 +1,4 @@
 # hello world
-from PIL.Image import new
 import numpy as np
 import api
 import random
@@ -76,7 +75,10 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
             for j in range(len(curr_board)):
                 if (curr_board[i][j] != 0):
                     curr_board[i][j] -= .1
-        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId)
+        for obstacle in obstacles:
+                if obstacle in visited:
+                    obstacles.remove(obstacle)
+        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId, location)
         # END CODE FOR VISUALIZATION
 
         #in q-table, get index of best option for movement based on our current state in the world
@@ -92,7 +94,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
             move_num = np.argmax(q_table[location[0]][location[1]])
 
         #make the move - transition into a new state
-        move_response = a.make_move(move=num_to_move(move_num), worldId='0') 
+        move_response = a.make_move(move=num_to_move(move_num), worldId=str(worldId)) 
         print("move_response", move_response)
         #OK response looks like {"code":"OK","worldId":0,"runId":"931","reward":-0.1000000000,"scoreIncrement":-0.0800000000,"newState":{"x":"0","y":3}}
         
@@ -122,8 +124,8 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
             for obstacle in obstacles:
                 if obstacle in visited:
                     obstacles.remove(obstacle)
-
-
+            
+            
         else:
             terminal_state = True
             print("TERMINAL STATE ENCOUNTERED?!!?!??")
@@ -133,33 +135,25 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         rewards_acquired.append(reward) #add reward to plot
 
         #update the q-table for the state we were in before
-        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId)
+        update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num)
         
         #update our current location var
         location = new_loc
 
         if terminal_state:
-            curr_board[new_loc[0]][new_loc[1]] = float("-inf")
             if reward > 0:
                 good = True
-                good_term_states.append(new_loc)
-            else:
-                bad_term_states.append(new_loc)
-            v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId)
+            if not(location in good_term_states) and not(location in bad_term_states):
+                if good:
+                    good_term_states.append(location)
+                else:
+                    bad_term_states.append(location)
+            v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId, location)
             break
-
-
-
-    # #close the api instance
-    # a.enter_world(worldId=-1)
 
     #cumulative average for plotting purposes
     pyplot.figure(2, figsize=(5,5))
     cumulative_average = np.cumsum(rewards_acquired) / (np.arange(len(rewards_acquired)) + 1)
     utils.plot_learning(worldId, epoch, cumulative_average, run_num)
 
-    return q_table, new_loc, obstacles, good
-
-
-
-
+    return q_table, good_term_states, bad_term_states, obstacles
