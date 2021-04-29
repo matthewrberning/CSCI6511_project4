@@ -57,7 +57,7 @@ class API:
         conn.request("POST", "/aip2pgaming/api/rl/gw.php", payload, headers)
         res = conn.getresponse()
         data = res.read()
-        print(data.decode("utf-8"))
+        # print(data.decode("utf-8"))
         return json.loads(data.decode("utf-8"))
 
     def get_runs(self):
@@ -122,5 +122,5 @@ class API:
         conn.request("POST", "/aip2pgaming/api/rl/gw.php", payload, headers)
         res = conn.getresponse()
         data = res.read()
-        print(data.decode("utf-8"))
+        # print(data.decode("utf-8"))
         return json.loads(data.decode("utf-8"))

@@ -72,7 +72,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
     a = api.API(worldId=worldId)
     w_res = a.enter_world()
 
-    if verbose: print("w_res",w_res)
+    if verbose: print("w_res: ",w_res)
 
     #init terminal state reached
     terminal_state = False
@@ -106,7 +106,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
     #keep track of where we've been for the visualization
     visited.append(location)
     while True:
-        # CODE FOR VISUALIZATION
+        #////////////////// CODE FOR VISUALIZATION
         curr_board[location[1]][location[0]] = 1
         for i in range (len(curr_board)):
             for j in range(len(curr_board)):
@@ -116,7 +116,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
             if obstacle in visited:
                 obstacles.remove(obstacle)
         v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId, location)
-        # END CODE FOR VISUALIZATION
+        #//////////////// END CODE FOR VISUALIZATION
 
         #in q-table, get index of best option for movement based on our current state in the world
         if mode == 'train':
