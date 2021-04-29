@@ -11,11 +11,11 @@ def plot_learning(worldId, epoch, cumulative_average, rn):
     plt.savefig(f'runs/world_{worldId}/attempt_{rn}/world_{worldId}_epoch{epoch}learning.png')
 
 def epsilon_decay(epsilon, epoch, epochs):
-	'''
-	function to exponentially decrease the episilon value 
-	acroccs the total number of epochs we train on
-	this leads us to explore less as we progress through epochs 
-	'''
+    '''
+    function to exponentially decrease the episilon value 
+    acroccs the total number of epochs we train on
+    this leads us to explore less as we progress through epochs 
+    '''
     
     epsilon = epsilon*np.exp(-.01*epoch)
     

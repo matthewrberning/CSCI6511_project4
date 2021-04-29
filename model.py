@@ -118,7 +118,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         for obstacle in obstacles:
             if obstacle in visited:
                 obstacles.remove(obstacle)
-        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId, location)
+        v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId, location, verbose)
         #//////////////// END CODE FOR VISUALIZATION
 
         #in q-table, get index of best option for movement based on our current state in the world
@@ -217,7 +217,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
                     bad_term_states.append(location)
 
             #update our visualization a last time before moving onto the next epoch
-            v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId, location)
+            v.update_grid(curr_board, good_term_states, bad_term_states, obstacles, run_num, epoch, worldId, location, verbose)
             break
 
     #possibly not needed but this seperates out the plot
