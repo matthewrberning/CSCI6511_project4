@@ -8,6 +8,7 @@ def update_grid(data, good_term_states, bad_term_states, obstacles, run_num, epo
     pyplot.clf()
     pyplot.imshow(data)
     pyplot.draw()
+    pyplot.title(f'WORLD: {world} EPOCH: {epoch}')
     pyplot.ylim(-1, 41)
     pyplot.xlim(-1,41)
     for x in good_term_states:

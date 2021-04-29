@@ -24,6 +24,12 @@ def main():
 
 		print(f"\ntraining from scratch for {epochs} on world {world}! \n(visualizations will be saved to './runs/world_{world}/')\n(Q-tables will be saved to './runs/Q-table_world_{world}'")
 
+		verbose = str(input(f"\nverbosity? (default is yes)\n([y]/n)? ") or "y")
+		if verbose == "y":
+			v = True
+		else:
+			v = False
+
 		epsilon = 0.9
 
 		q_table = model.init_q_table()
@@ -44,7 +50,7 @@ def main():
 			print("EPOCH #"+str(epoch)+":\n\n")
 			q_table, good_term_states, bad_term_states, obstacles = model.learn(
 				q_table, worldId=world, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
-				epoch=epoch, obstacles=obstacles, run_num=run_num)
+				epoch=epoch, obstacles=obstacles, run_num=run_num, verbose=v)
 
 			epsilon = utils.epsilon_decay(epsilon, epoch, epochs)
 
@@ -57,6 +63,12 @@ def main():
 		
 		world = int(input("\nwhich World [0-10] would you like the agent to exploit? (default is World 0)\nWORLD: ") or "0")
 		epochs = int(input(f"\nhow many times would you like the agent to run on World {world} for? (default is 1 time)\nEPOCHS: ") or "1")
+
+		verbose = str(input(f"\nverbosity? (default is yes)\n([y]/n)? ") or "y")
+		if verbose == "y":
+			v = True
+		else:
+			v = False
 
 		print(f"\nExploiting world {world} for {epochs} iterations! \n(visualizations will be saved to './runs/world_{world}/')")
 
@@ -78,13 +90,19 @@ def main():
 			print("EPOCH #"+str(epoch)+":\n\n")
 			q_table, good_term_states, bad_term_states, obstacles = model.learn(
 				q_table, worldId=world, mode='expl', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
-				epoch=epoch, obstacles=obstacles, run_num=run_num)
+				epoch=epoch, obstacles=obstacles, run_num=run_num, verbose=v)
 	
 
 	if mode == "c":
 		int(input(f"\nyou've chosen to train the agent on all Worlds [1-10], this could take a while.. (are you sure?)\nProceed ([y]/n)? ") or "y")
 
 		epochs = int(input(f"\nhow many epochs would you the agent to train on each World? (default is 10 epochs)\nEPOCHS: ") or "10")
+
+		verbose = str(input(f"\nverbosity? (default is yes)\n([y]/n)? ") or "y")
+		if verbose == "y":
+			v = True
+		else:
+			v = False
 
 
 		if confirm == "y":
@@ -115,12 +133,12 @@ def main():
 					print("EPOCH #"+str(epoch)+":\n\n")
 					q_table, good_term_states, bad_term_states, obstacles = model.learn(
 						q_table, worldId=world, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
-						epoch=epoch, obstacles=obstacles, run_num=run_num)
+						epoch=epoch, obstacles=obstacles, run_num=run_num, verbose=v)
 
 					epsilon = utils.epsilon_decay(epsilon, epoch, epochs)
 
 					np.save(file_path, q_table)
-					
+
 				np.save(f"./runs/obstacles_world_{world}", obstacles)
 				np.save(f"./runs/good_term_states_world_{world}", good_term_states)
 				np.save(f"./runs/bad_term_states_world_{world}", bad_term_states)
