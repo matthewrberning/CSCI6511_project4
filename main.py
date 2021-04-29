@@ -82,7 +82,7 @@ def main():
 	
 
 	if mode == "c":
-		int(input(f"\nyou've chosen to train the agent on all Worlds [1-10], this could take a while.. (are you sure?)\n'y' or 'n': ") or "y")
+		int(input(f"\nyou've chosen to train the agent on all Worlds [1-10], this could take a while.. (are you sure?)\nProceed ([y]/n)? ") or "y")
 
 		epochs = int(input(f"\nhow many epochs would you the agent to train on each World? (default is 10 epochs)\nEPOCHS: ") or "10")
 
