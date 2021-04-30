@@ -139,10 +139,19 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         if verbose: print("move_response", move_response)
         #OK response looks like {"code":"OK","worldId":0,"runId":"931","reward":-0.1000000000,"scoreIncrement":-0.0800000000,"newState":{"x":"0","y":3}}
         
+
         if move_response["code"] != "OK":
             #handel the unexpected
             print(f"something broke on make_move call \nresponse lookes like: {move_response}")
-            break
+
+            move_failed = True
+            while move_failed:
+                move_response = a.make_move(move=num_to_move(move_num), worldId=str(worldId))
+
+                print("\n\ntrying move again!!\n\n")
+
+                if move_response["code"] == 'OK':
+                    move_failed = False
         
         # check that we're not in a terminal state, and if not convert new location JSON into tuple
         if move_response["newState"] is not None:
