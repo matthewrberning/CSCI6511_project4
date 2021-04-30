@@ -133,7 +133,14 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         if mode == 'train':
             #use an episolon greedy approach to randomly explore or exploit
             if np.random.uniform() < epsilon:
-                move_num = random.randint(0,7) 
+                unexplored = np.where(q_table[location[0]][location[1]] == 0)
+                explored = np.where(q_table[location[0]][location[1]] != 0)
+
+                if unexplored.size != 0:
+                    move_num = int( np.random.choice( unexplored ) )
+                else:
+                    move_num = int( np.random.choice( explored ) )
+                
             else:
                 move_num = np.argmax(q_table[location[0]][location[1]])
 
