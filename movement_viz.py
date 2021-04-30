@@ -11,12 +11,12 @@ def update_grid(data, good_term_states, bad_term_states, obstacles, run_num, epo
     pyplot.title(f'WORLD: {world} EPOCH: {epoch}')
     pyplot.ylim(-1, 41)
     pyplot.xlim(-1,41)
+    for z in obstacles:
+        pyplot.plot(z[0], z[1], marker="s", color = 'k')
     for x in good_term_states:
         pyplot.plot(x[0], x[1], marker="s", color = 'g')
     for y in bad_term_states:
         pyplot.plot(y[0], y[1], marker="s", color = 'r')
-    for z in obstacles:
-        pyplot.plot(z[0], z[1], marker="s", color = 'k')
     pyplot.plot(location[0], location[1], marker="*", color = 'indigo')
 
     #use verbosity to adjust the visibility of the plot 
