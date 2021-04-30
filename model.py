@@ -14,7 +14,7 @@ def init_q_table():
     ex of indexing: q-tab[0][0][0] gird 0:0, action 'N'
     '''
 
-    return (np.zeros((40, 40, 4)))
+    return (np.zeros((40, 40, 8)))
 
 def num_to_move(num):
     '''
@@ -31,6 +31,14 @@ def num_to_move(num):
         return 'E'
     elif num == 3:
         return 'W'
+    elif num == 4:
+        return 'NE'
+    elif num == 5:
+        return 'NW'
+    elif num == 6:
+        return 'SE'
+    elif num == 7:
+        return 'SW'
     return 'ERROR!'
 
 def update_q_table(location, q_table, reward, gamma, new_loc, learning_rate, move_num):
@@ -125,7 +133,7 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
         if mode == 'train':
             #use an episolon greedy approach to randomly explore or exploit
             if np.random.uniform() < epsilon:
-                move_num = random.randint(0,3) 
+                move_num = random.randint(0,7) 
             else:
                 move_num = np.argmax(q_table[location[0]][location[1]])
 
@@ -170,8 +178,26 @@ def learn(q_table, worldId=0, mode='train', learning_rate=0.001, gamma=0.9, epsi
                 expected_loc[1]+=1
             elif recent_move == "E":
                 expected_loc[0]+=1
-            else:
+            elif recent_move == "W":
                 expected_loc[0]-=1
+
+            elif recent_move == "NE":
+                expected_loc[1]-=1
+                expected_loc[0]+=1
+
+            elif recent_move == "NW":
+                expected_loc[1]-=1
+                expected_loc[0]-=1
+
+            elif recent_move == "SE":
+                expected_loc[1]+=1
+                expected_loc[0]+=1
+            elif recent_move == "SW":
+                expected_loc[1]+=1
+                expected_loc[0]-=1
+
+
+
             expected_loc = tuple(expected_loc)
 
             if verbose: print(f"New Loc: {new_loc} (where we actually are now):")
