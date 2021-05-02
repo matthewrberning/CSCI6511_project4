@@ -116,7 +116,7 @@ def main():
 
 				print(f"\ntraining from scratch for {epochs} on world {world}! \n(visualizations will be saved to './runs/world_{world}/')\n(Q-tables will be saved to './runs/Q-table_world_{world}'")
 
-				epsilon = 0.9
+				epsilon = 1
 
 				q_table = model.init_q_table()
 
@@ -141,7 +141,7 @@ def main():
 					q_table, good_term_states, bad_term_states, obstacles = model.learn(
 						q_table, worldId=world, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
 						epoch=epoch, obstacles=obstacles, run_num=run_num, verbose=v)
-
+					
 					epsilon = utils.epsilon_decay(epsilon, epoch, epochs)
 
 					np.save(file_path, q_table)
