@@ -107,11 +107,11 @@ def main():
 		if cont.lower() == "y":
 			epochs_computed = int(input(f"\nHow many epochs were used in previous training runs?\nEPOCHS: "))
 			epochs = int(input(f"\nhow many more epochs would you the agent to train on each World? (default is 10 epochs)\nEPOCHS: ") or "10")
-			epsilon = utils.epsilon_decay(0.9, 6, epochs_computed+epochs)
+			init_eps = epsilon = utils.epsilon_decay(0.9, 6, epochs_computed+epochs)
 		else:
 			epochs = int(input(f"\nhow many epochs would you the agent to train on each World? (default is 10 epochs)\nEPOCHS: ") or "10")
 			epochs_computed = 0
-			epsilon = 0.9
+			init_eps = epsilon = 0.9
 
 		verbose = str(input(f"\nverbosity? (default is yes)\n([y]/n)? ") or "y")
 		if verbose == "y":
@@ -148,7 +148,7 @@ def main():
 					bad_term_states = []
 					obstacles = []
 					q_table = model.init_q_table()
-
+				
 				t = trange(epochs, desc='Training on all worlds', leave=True)
 
 				for epoch in t:
@@ -159,7 +159,7 @@ def main():
 						q_table, worldId=world, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
 						epoch=epoch, obstacles=obstacles, run_num=run_num, verbose=v)
 					
-					epsilon = utils.epsilon_decay(epsilon, epoch+epochs_computed, epochs+epochs_computed)
+					epsilon = utils.epsilon_decay(init_eps, epoch+epochs_computed, epochs+epochs_computed)
 
 					np.save(file_path, q_table)
 
