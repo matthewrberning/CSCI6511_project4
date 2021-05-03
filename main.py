@@ -102,7 +102,16 @@ def main():
 	if mode == "c":
 		confirm = str(input(f"\nyou've chosen to train the agent on all Worlds [1-10], this could take a while.. (are you sure?)\nProceed ([y]/n)? ") or "y")
 
-		epochs = int(input(f"\nhow many epochs would you the agent to train on each World? (default is 10 epochs)\nEPOCHS: ") or "10")
+		cont = str(input(f"\nWould you like to continue training from previous runs? (are you sure?)\nProceed ([y]/n)? ") or "y")
+
+		if cont.lower() == "y":
+			epochs_computed = int(input(f"\nHow many epochs were used in previous training runs?\nEPOCHS: "))
+			epochs = int(input(f"\nhow many more epochs would you the agent to train on each World? (default is 10 epochs)\nEPOCHS: ") or "10")
+			epsilon = utils.epsilon_decay(0.9, 6, epochs_computed+epochs)
+		else:
+			epochs = int(input(f"\nhow many epochs would you the agent to train on each World? (default is 10 epochs)\nEPOCHS: ") or "10")
+			epochs_computed = 0
+			epsilon = 0.9
 
 		verbose = str(input(f"\nverbosity? (default is yes)\n([y]/n)? ") or "y")
 		if verbose == "y":
@@ -116,9 +125,9 @@ def main():
 
 				print(f"\ntraining from scratch for {epochs} on world {world}! \n(visualizations will be saved to './runs/world_{world}/')\n(Q-tables will be saved to './runs/Q-table_world_{world}'")
 
-				epsilon = 1
+				
 
-				q_table = model.init_q_table()
+				
 
 				if not (os.path.exists(f"./runs/world_{world}/")):
 					os.makedirs(f"./runs/world_{world}/")
@@ -128,9 +137,17 @@ def main():
 
 				file_path = f"./runs/Q-table_world_{world}"
 
-				good_term_states = []
-				bad_term_states = []
-				obstacles = []
+				if cont.lower() == 'y':
+					good_term_states = np.load(open(f"./runs/good_term_states_world_{world}.npy", "rb"))
+					bad_term_states = np.load(open(f"./runs/bad_term_states_world_{world}.npy", "rb"))
+					obstacles = np.load(open(f"./runs/obstacles_world_{world}.npy", "rb"))
+
+					q_table = np.load(open(f"./runs/Q-table_world_{world}.npy", "rb"))
+				else:
+					good_term_states = []
+					bad_term_states = []
+					obstacles = []
+					q_table = model.init_q_table()
 
 				t = trange(epochs, desc='Training on all worlds', leave=True)
 
@@ -142,7 +159,7 @@ def main():
 						q_table, worldId=world, mode='train', learning_rate=0.0001, gamma=0.9, epsilon=epsilon, good_term_states=good_term_states, bad_term_states=bad_term_states,
 						epoch=epoch, obstacles=obstacles, run_num=run_num, verbose=v)
 					
-					epsilon = utils.epsilon_decay(epsilon, epoch, epochs)
+					epsilon = utils.epsilon_decay(epsilon, epoch+epochs_computed, epochs+epochs_computed)
 
 					np.save(file_path, q_table)
 
